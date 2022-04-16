@@ -19,10 +19,8 @@ class IndexController extends Controller
                         foreach ($v as $K => $V) {
                             $arr["meta"][$V] = $post["metaVal"][$K];
                         }
-                    } elseif ($k == "attrKey") {
-                        foreach ($v as $K => $V) {
-                            $arr["variations"][] = ["key" => $V, "value" => $post["attrVal"][$K], "price" => $post["attrPrice"][$K]];
-                        }
+                    } elseif($k != "metaVal") {
+                        $arr[$k] = $v;
                     }
                 } else {
                     $arr[$k] = $v;
@@ -63,7 +61,7 @@ class IndexController extends Controller
                             $arr["variations"][] = ["key" => $V, "value" => $post["attrVal"][$K], "price" => $post["attrPrice"][$K]];
                         }
                     } else {
-                        $arr[$k]=array_merge($v,$arr[$k]??[]);
+                        $arr[$k] = array_merge($v, $arr[$k] ?? []);
                     }
                 } else {
                     $arr[$k] = $v;

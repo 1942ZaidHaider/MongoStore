@@ -23,25 +23,29 @@ $(function () {
         e.preventDefault();
         list = $("#varList").val().split(",");
         console.log(list);
-        html = "";
+        html = `<p> Variation ${attr + 1}</p> 
+        <div class="row">`;
         if (list[0] != "") {
             for (i of list) {
-                html += `<div class=" p-2 row">
-                <div class='form-floating col'>
-                <input name='variations[][${i.trim()}]' class='form-control' placeholder="x" type='text'>
+                html += `<div class='form-floating col-3'>
+                <input name='variations[${attr}][${i.trim()}]' class='form-control' placeholder="x" type='text'>
                 <label>&nbsp;&nbsp;${i.trim()}</label>
-            </div>
-            <div class='col-1'>
-            </div>
             </div>`;
             }
-            html += `<button class='btn btn-danger' id="rmAttr">Remove</button>`;
-            $("#attr").append(`<div class='varItem m-3 border'>${html}</div>`);
+            html += `<div class='form-floating col-3'>
+            <input required name='variations[${attr}][price]' class='form-control' placeholder="x" type='text'>
+            <label>&nbsp;&nbsp;Price</label>
+        </div>
+        <div class='col-2'><button class='btn btn-danger' id="rmAttr">Remove</button></div>
+        </div>`;
+            $("#attr").append(
+                `<div class='varItem m-3 p-2 border'>${html}</div>`
+            );
             $("#varList").val("");
             attr++;
         }
     });
-    $(document).on("click","#rmAttr", function (e) {
+    $(document).on("click", "#rmAttr", function (e) {
         e.preventDefault();
         $(this).parents("div.varItem").remove();
         attr--;
@@ -62,28 +66,19 @@ function showModal(e) {
         item = JSON.parse(data);
         console.log(item);
     });
-    text = "<p class='fs-5 fw-bolder'> Meta:</p><span>";
+    text = "<p class='fs-5 mb-0 fw-bolder'> Meta:</p><span>";
     for (i in item.meta) {
         text += i + " : " + item.meta[i] + "<br>";
     }
-    text += `</span><p class='fs-5 fw-bolder'> Variations:</p>
-    <table class='table table-dark table-striped'>
-    <tr>
-    <th>Attribute</th>
-    <th>Value</th>
-    <th>Price</th>
-    </tr>`;
+    text += `<p class='fs-5 mb-0 fw-bolder'>Variations</p><div class='row'> `;
     for (i in item.variations) {
-        text +=
-            "<tr><td>" +
-            item.variations[i].key +
-            " </td><td>" +
-            item.variations[i].value +
-            " </td><td>" +
-            item.variations[i].price +
-            "</td></tr>";
+        text+="<div class='container border rounded border-secondary p-2 col-3'>";
+        for(j in item.variations[i]){
+            text+=`<span>${j} : ${item.variations[i][j]}</span><br>`;
+        }
+        text+="</div>";
     }
-    text += "</table>";
+    text += "</div>";
     modal = `<div class="modal" style="background-color:rgba(0, 0, 0, .5)" tabindex="-1">
     <div class="modal-dialog text-light">
       <div class="modal-content">
