@@ -20,14 +20,37 @@ class OrderController extends Controller
             $this->order->mInsert($arr);
         }
         $q = $this->request->getQuery('q');
+        $query=[];
         if ($q) {
+            $dt   = new DateTime(date("Y-n-d",time()));               
+            $today =intval($dt->getTimestamp());
             if (strtolower($q) == 'today') {
-                $dt   = new DateTime(date("Y-n-d",time()));               
-                $query =strval($dt->getTimestamp());
+                $query=["time"=>['$gte'=>$today]];
+            } elseif (strpos(strtolower($q),'week')!==false) {
+                $weekStart=date("d",$today)-(date("w",$today)-1);
+                $thisWeek=strtotime(date("$weekStart-n-Y",$today));
+                $query=["time"=>['$gte'=>$thisWeek]];
+            } elseif (strpos(strtolower($q),'month')!==false) {
+                $thisMonth=strtotime(date("1-n-Y",$today));
+                $query=["time"=>['$gte'=>$thisMonth]];
+            } elseif (strpos(strtolower($q),'year')!==false) {
+                $thisYear=strtotime(date("1-1-Y",$today));
+                $query=["time"=>['$gte'=>$thisYear]];
+            } else {
+                $range=explode(":",$q);
+                if(count($range)<=0){
+                    $query=[];
+                } elseif(count($range)==1) {
+                    $timeStart=strtotime($range[0]);
+                    $query=['time'=>['$lte'=>time(),'$gte'=>$timeStart]];
+                } elseif(count($range)==2) {
+                    $timeStart=strtotime($range[0]);
+                    $timeEnd=strtotime($range[1]);
+                    $query=['time'=>['$lte'=>$timeEnd,'$gte'=>$timeStart]];
+                }
             }
         }
-        //die;
-        $this->view->orderData = $this->order->mFind(["time"=>['$gte'=>$query]]);// ?? [];
+        $this->view->orderData = $this->order->mFind($query);// ?? [];
         $this->view->productData = $this->product->mFind() ?? [];
         $this->view->statuses = ["Paid", "Processing", "Dispatched", "Shipped", "Refunded"];
     }

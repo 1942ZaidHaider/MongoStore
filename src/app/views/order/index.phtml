@@ -2,17 +2,22 @@
 <div class="mt-3">
     <form method="POST" class='form-group'>
         <div class='form-floating'><input type="text" name="name" required placeholder="name" class='form-control'><label>Name</label></div>
-        <p>Products</p>
-        <div class='row container'>
+        <p class='fs-3'>Products</p>
+        <table class='table table-striped text-center'>
+            <tr>
+                <td>Product</td>
+                <td>Variations</td>
+            </tr>
             <?php foreach ($productData as $d) { ?>
-                <div class='col-4 border p-2 m-1 rounded'>
-                    <div>
+                <tr>
+                    <td>
                         <span class='fs-3'><?php echo $d['name'] ?></span>
                         <span class='text-muted'>/<?php echo $d['category'] ?></span>
-                    </div>
-                    <div class='row container'>
+                    </td>
+                    <td> 
+                        <div class='container row text-start'>
                         <?php foreach ($d['variations'] as $v) { ?>
-                            <div class='col-6 text-warning bg-dark p-1 container'>
+                            <div class='col-3 p-1 container-fluid'>
                                 <label><input name="products[data]" type="radio" value="<?php echo base64_encode(json_encode($v)) ?>">
                                     <div>
                                         <?php foreach ($v as $key => $value) { ?>
@@ -25,11 +30,12 @@
                                 </label>
                             </div>
                         <? } ?>
-                    </div>
-                </div>
+                        </div>
+                    </td>
+                </tr>
             <?php } ?>
-            <div class='form-floating'><input type="number" name="products[quantity]" value=1 placeholder="quantity" class='form-control bg-dark text-light'><label>Quantity</label></div>
-        </div>
+        </table>
+        <div class='form-floating p-0'><input type="number" name="products[quantity]" value=1 placeholder="quantity" class='form-control'><label>Quantity</label></div>
         <hr>
         <input type="submit" value="Place" class='form-control bg-dark text-light'>
     </form>
@@ -58,7 +64,7 @@
                     <span><?php echo $v['products']['quantity'] ?></span><br>
                 </td>
                 <td>
-                    <span><?php echo date("d M, h:m:s",$v['time']) ?></span><br>
+                    <span><?php echo date("d M, h:m:s", $v['time']) ?></span><br>
                 </td>
                 <td>
                     <a href="/order/status?id=<?php echo base64_encode($v['_id']) ?>" class='float-end text-dark fw-bolder text-decoration-none'><?php echo $statuses[$v['status']] ?></a>
